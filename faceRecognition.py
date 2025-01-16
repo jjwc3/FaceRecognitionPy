@@ -4,6 +4,7 @@ import os
 import sys
 
 def main() :
+    print('[START]', flush=True)
     # 이미지 경로
     # reference_path = input("Reference Image File: ")
     # images_folder = input("Target Image Folder: ")
@@ -23,7 +24,7 @@ def main() :
     # ]
     args = sys.argv[1:]
     if len(args) != 4:
-        raise Exception(f"Arguments Error. 4 Arguments(reference_path, images_folder, output_folder, model) needed. Current Argument: {str(args)}")
+        raise Exception(f"[ARGERROR] Arguments Error. 4 Arguments(reference_path, images_folder, output_folder, model) needed. Current Argument: {str(args)}")
     reference_path, images_folder, output_folder, model = args
 
     os.makedirs(output_folder, exist_ok=True)
@@ -35,7 +36,7 @@ def main() :
     for img_file in image_files:
         img_path = os.path.join(images_folder, img_file)
         compare_img = cv2.imread(img_path)
-
+        print(f"[TARGET] {img_path}", flush=True)
         # DeepFace 얼굴 비교
         result = DeepFace.verify(img1_path=reference_img,
                                  img2_path=compare_img,
@@ -43,7 +44,7 @@ def main() :
                                  model_name=model)
 
         if result['verified']:
-            print(f"[MATCH] {img_file}: Face Match Found!")
+            print(f"[MATCH] \"{img_file}\"", flush=True)
 
             # 얼굴 좌표 추출 (DeepFace)
             try:
@@ -72,12 +73,12 @@ def main() :
                         cropped_img = compare_img[new_y:new_y + new_h, new_x:new_x + new_w]
                         output_path = os.path.join(output_folder, f"cropped_{img_file}")
                         cv2.imwrite(output_path, cropped_img)
-                        print(f"  - Cropped image saved to \"{output_path}\"")
+                        print(f"[SAVED] {output_path}", flush=True)
                         break
             except Exception as e:
-                print(f"  - Face extraction failed for {img_file}: {e}")
+                print(f"[FAIL] {img_file}: {e}", flush=True)
         else:
-            print(f"[NO MATCH] {img_file}: Face Did Not Match.")
+            print(f"[NOMATCH] {img_file}", flush=True)
 
 
 if __name__ == "__main__":
