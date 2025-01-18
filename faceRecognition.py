@@ -23,15 +23,17 @@ def main() :
     #     "VGG-Face"
     # ]
     args = sys.argv[1:]
-    if len(args) != 4:
-        raise Exception(f"[ARGERROR] Arguments Error. 4 Arguments(reference_path, images_folder, output_folder, model) needed. Current Argument: {str(args)}")
-    reference_path, images_folder, output_folder, model = args
+    if len(args) != 6:
+        raise Exception(f"[ARGERROR] Arguments Error. 6 Arguments(reference_path, images_folder, output_folder, model, width_times, height_times) needed. Current Argument: {str(args)}")
+    reference_path, images_folder, output_folder, model, width_times, height_times = args
+    width_times = float(width_times)
+    height_times = float(height_times)
 
     os.makedirs(output_folder, exist_ok=True)
 
     # 레퍼런스 이미지 얼굴 검출 및 비교
     reference_img = cv2.imread(reference_path)
-    image_files = [f for f in os.listdir(images_folder) if f.endswith(('.jpg', '.png', '.jpeg'))]
+    image_files = [f for f in os.listdir(images_folder) if f.lower().endswith(('.jpg', '.png', '.jpeg'))]
 
     for img_file in image_files:
         img_path = os.path.join(images_folder, img_file)
@@ -56,8 +58,8 @@ def main() :
                         x, y, w, h = facial_area['x'], facial_area['y'], facial_area['w'], facial_area['h']
 
                         # 패딩 설정 (얼굴 중심을 기준으로 크롭)
-                        padding_x = int(w * 2.5)   # x좌표 2.5배
-                        padding_y = int(h * 3)      # y좌표 3배
+                        padding_x = int(w * width_times)   # x좌표 2.5배
+                        padding_y = int(h * height_times)      # y좌표 3배
 
                         # 얼굴의 중앙 좌표
                         center_x = x + w // 2
