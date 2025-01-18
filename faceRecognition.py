@@ -44,7 +44,7 @@ def main() :
                                  model_name=model)
 
         if result['verified']:
-            print(f"[MATCH] \"{img_file}\"", flush=True)
+            print(f"[MATCH] {img_file}", flush=True)
 
             # 얼굴 좌표 추출 (DeepFace)
             try:
